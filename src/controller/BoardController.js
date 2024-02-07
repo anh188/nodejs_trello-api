@@ -1,4 +1,7 @@
 const BoardService = require('../services/BoardService')
+// const cover = require('base64-js')
+// const fs = require('fs');
+
 class BoardController {
 
   create = async(req, res, next) => {
@@ -33,17 +36,23 @@ class BoardController {
     try {
       const { title, cover } = req.body
       const { id } = req.params
+      const existingBoard = await BoardService.findById(id)
+      if (!existingBoard) {
+        return res.status(400).json({ error: 'Board không tồn tại' })
+      }
       let data ={
         title,
         cover: req.file ? req.file.path: cover
       }
+      const updatedBoard = await BoardService.update(id, data)
       const result =await BoardService.update(id, data)
       if (result) {
+        existingBoard
         res.status(200).json({
-          'msg':'Updated'
+          'msg':'Sửa Board thành công', board: updatedBoard
         })
       } else {
-        throw new Error('Update fail')
+        throw new Error('Sửa Board thất bại')
       }
     } catch (error) {
       next(error)
@@ -53,11 +62,15 @@ class BoardController {
   delete = async (req, res, next ) => {
     try {
       const { id } = req.params
+      const existingBoard = await BoardService.findById(id)
+      if (!existingBoard) {
+        return res.status(400).json({ error: 'Board không tồn tại' })
+      }
       const result = await BoardService.delete(id)
       if (result) {
-        res.status(200).json({ 'msg':'Deleted' })
+        res.status(200).json({ 'msg':'Xóa Board thành công', board: existingBoard })
       } else {
-        throw new Error('Delete fail')
+        throw new Error('Xóa Board thất bại')
       }
     } catch (error) {
       next(error)

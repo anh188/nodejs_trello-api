@@ -1,5 +1,6 @@
 /* eslint-disable no-useless-catch */
 const BoardList = require('../models/BoardList')
+const mongoose = require('mongoose')
 
 class BoardListService {
 
@@ -25,7 +26,6 @@ class BoardListService {
   update = async(listId, data) => {
     try {
       const existingList = await BoardList.findById(listId)
-
       if (!existingList) {
         throw new Error('List not found')
       }
@@ -51,6 +51,18 @@ class BoardListService {
       existingList.title = data.title || existingList.title
       await existingList.save()
       return true
+    } catch (error) {
+      throw error
+    }
+  }
+
+  findById = async (id) => {
+    try {
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return null // Trả về null nếu id không hợp lệ
+      }
+      const boardlist = await BoardList.findById(id)
+      return boardlist || null // Trả về board nếu tìm thấy, hoặc null nếu không tìm thấy
     } catch (error) {
       throw error
     }

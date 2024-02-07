@@ -2,6 +2,8 @@
 /* eslint-disable no-useless-catch */
 const User = require('../models/User')
 const bcrypt = require('bcrypt')
+const mongoose = require('mongoose')
+
 class UserService {
 
   checkUserData = async(username, password) => {
@@ -34,8 +36,11 @@ class UserService {
   // }
   findById = async (id) => {
     try {
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return null // Trả về null nếu id không hợp lệ
+      }
       const user = await User.findById(id)
-      return user || null // Trả về user nếu tìm thấy, hoặc null nếu không tìm thấy
+      return user || null // Trả về board nếu tìm thấy, hoặc null nếu không tìm thấy
     } catch (error) {
       throw error
     }

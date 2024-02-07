@@ -48,9 +48,9 @@ class CardController {
       const { cardId } = req.params
       const result = await CardService.deleteCard(cardId)
       if (result) {
-        res.status(200).json({ msg: 'Card deleted' })
+        res.status(200).json({ msg: 'Xóa Card thành công' })
       } else {
-        throw new Error('Card deletion failed')
+        throw new Error('Xóa Card thất bại')
       }
     } catch (error) {
       next(error)
@@ -74,7 +74,7 @@ class CardController {
       const card = await CardService.getCardId(idCard)
 
       if (!card) {
-        return res.status(404).json({ message: 'Card not found' })
+        return res.status(404).json({ message: 'Card không tồn tại' })
       }
 
       res.status(200).json({ card })

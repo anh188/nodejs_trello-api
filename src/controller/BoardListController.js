@@ -1,6 +1,6 @@
 const BoardList = require('../models/BoardList')
 const BoardListService = require('../services/BoardListService')
-
+const CardService = require('../services/CardService')
 class BoardListController {
   getAll = async(req, res, next ) => {
     try {
@@ -34,11 +34,15 @@ class BoardListController {
       const { title, position } = req.body
       const { listId } = req.params
       const data = { title, position }
+      const existingBoard = await BoardListService.findById(listId)
+      if (!existingBoard) {
+        return res.status(400).json({ error: 'List không tồn tại' })
+      }
       const result = await BoardListService.update(listId, data)
       if (result) {
-        res.status(200).json({ msg: 'Updated' })
+        res.status(200).json({ msg: 'Sửa List thành công', boardlist:existingBoard })
       } else {
-        throw new Error('Update failed')
+        throw new Error('Sửa List thất bại')
       }
     } catch (error) {
       next(error)
@@ -48,11 +52,16 @@ class BoardListController {
   delete = async(req, res, next) => {
     try {
       const { listId } = req.params
+      await CardService.deleteCardsByListId(listId)
+      const existingBoard = await BoardListService.findById(listId)
+      if (!existingBoard) {
+        return res.status(400).json({ error: 'List không tồn tại' })
+      }
       const result = await BoardListService.delete(listId)
       if (result) {
-        res.status(200).json({ msg: 'List deleted' })
+        res.status(200).json({ msg: 'Xóa List thành công', boardlist:existingBoard })
       } else {
-        throw new Error('List deletion failed')
+        throw new Error('Xóa List thất bại')
       }
     } catch (error) {
       next(error)

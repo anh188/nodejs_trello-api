@@ -26,7 +26,7 @@ const validateBoardListData = (req, res, next) => {
 // // Định nghĩa API để tạo mới một danh sách trong bảng
 router.post('/lists', validateBoardListData, boardListController.create)
 router.put('/lists/:listId', boardListController.update)
-router.delete('/:boardId/lists/:listId', boardListController.delete)
+router.delete('/lists/:listId', boardListController.delete)
 router.get('/:boardId/lists', boardListController.getAll)
 
 module.exports = router

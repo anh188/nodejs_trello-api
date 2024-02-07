@@ -1,8 +1,9 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-useless-catch */
 /* eslint-disable space-before-blocks */
+// const { default: mongoose } = require('mongoose')
 const Board = require('../models/Board')
-
+const mongoose = require('mongoose')
 class BoardService{
 
   create = async (dataBoard) => {
@@ -27,8 +28,8 @@ class BoardService{
 
   update = async (id, data) => {
     try {
-      const result = await Board.updateOne({ _id:id }, { title:data.title, cover:data.cover })
-      return true
+      const updatedBoard = await Board.findOneAndUpdate({ _id: id }, data, { new: true })
+      return updatedBoard
     } catch (error) {
       throw error
     }
@@ -36,11 +37,21 @@ class BoardService{
 
   delete = async (id) => {
     try {
+      const deletedBoard = await Board.findByIdAndDelete(id)
+      return deletedBoard
+    } catch (error) {
+      throw error
+    }
+  }
+
+  findById = async (id) => {
+    try {
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return null // Trả về null nếu id không hợp lệ
+      }
       const board = await Board.findById(id)
-      // console.log(board)
-      await board.deleteOne()
-      return true
-    } catch (error){
+      return board || null // Trả về board nếu tìm thấy, hoặc null nếu không tìm thấy
+    } catch (error) {
       throw error
     }
   }

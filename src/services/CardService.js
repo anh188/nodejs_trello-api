@@ -44,11 +44,20 @@ class CardService {
     }
   }
 
-  getCardId = async (idCard) => {
+  static async getCardId (idCard) {
     try {
       const card = await Card.findOne({ _id: idCard })
       // console.log(card)
       return card
+    } catch (error) {
+      throw error
+    }
+  }
+  static async deleteCardsByListId(listId) {
+    try {
+      // Xóa tất cả các thẻ có listId tương ứng
+      const result = await Card.deleteMany({ listId })
+      return result.deletedCount
     } catch (error) {
       throw error
     }
